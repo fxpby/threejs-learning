@@ -4,9 +4,10 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import MainLayout from './Layouts/MainLayout'
 import ErrorPage from './pages/ErrorPage'
-import Exercise from './pages/Exercises'
+import Task1 from './pages/Exercises/task1'
 import 'virtual:uno.css'
 import './index.css'
+
 
 const router = createBrowserRouter(
   [
@@ -17,7 +18,7 @@ const router = createBrowserRouter(
       children: [
         {
           path: 'exercise/:key',
-          element: <Exercise />,
+          element: <Task1 />,
         },
       ],
     },
