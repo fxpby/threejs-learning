@@ -8,19 +8,22 @@ import Exercise from './pages/Exercises'
 import 'virtual:uno.css'
 import './index.css'
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: 'exercise/:key',
-        element: <Exercise />,
-      },
-    ],
-  },
-])
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <MainLayout />,
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: 'exercise/:key',
+          element: <Exercise />,
+        },
+      ],
+    },
+  ],
+  { basename: '/three-js-demo' },
+)
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider>
