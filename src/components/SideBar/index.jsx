@@ -20,7 +20,11 @@ const navList = [
   {
     title: '三要素',
     icon: <BiHeart size="16px" />,
-    subMenu: [{ title: '场景' }, { title: '相机' }, { title: '渲染器' }],
+    subMenu: [
+      { title: '场景', key: 'sence' },
+      { title: '相机', key: 'camera' },
+      { title: '渲染器', key: 'task1' },
+    ],
   },
   {
     title: '物体',
