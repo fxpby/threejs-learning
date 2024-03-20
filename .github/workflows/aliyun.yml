@@ -3,8 +3,8 @@ on:
   #监听push操作
   push:
     branches:
-      # master分支，你也可以改成其他分支
-      - master
+      # main 分支，你也可以改成其他分支
+      - main
 jobs:
   build:
     # runs-on 指定job任务运行所需要的虚拟机环境(必填字段)
