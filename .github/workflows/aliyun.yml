@@ -16,7 +16,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      # 安装 Node 20.10.0
+      # 安装 Node
       - name: use Node.js 🐣
         # 使用action库  actions/setup-node安装node
         uses: actions/setup-node@v4
