@@ -13,23 +13,22 @@ jobs:
       # 使用action库  actions/checkout获取源码
       - name: Checkout 🐤
         uses: actions/checkout@v4
-          - uses: pnpm/action-setup@v2
-          with:
-          version: 8
+      - uses: pnpm/action-setup@v2
+        with:
+        version: 8
       # 安装 Node 20.10.0
       - name: use Node.js 🐣
         # 使用action库  actions/setup-node安装node
         uses: actions/setup-node@v4
         with:
           node-version: 18
-        cache: 'pnpm'
+          cache: 'pnpm'
 
       # 缓存 pnpm node_modules
       - name: Cache dependencies 🐤
         run: pnpm install
       - name: Build
         run: pnpm run build
-
 
       # 部署到阿里云
       - name: Deploy to Aliyun 🚀
