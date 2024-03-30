@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 export default function Task2() {
   console.log('%c Line:5 🍆 Task1', 'color:#7f2b82')
@@ -13,14 +14,36 @@ export default function Task2() {
 
     // 创建立方体的几何体
     const geometry = new THREE.BoxGeometry(1, 1, 1)
+    console.log('%c Line:16 🍕 geometry', 'color:#4fff4B', geometry)
 
     // 创建立方体的基础材质
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x1890ff,
-    })
+    // const material = new THREE.MeshLambertMaterial({
+    //   color: 0x1890ff,
+    //   wireframe: true,
+    // })
+
+    const faces = geometry.groups.map(
+      () => new THREE.MeshBasicMaterial({ color: 0xffffff * Math.random() }),
+    )
+
+    // 添加全局光照
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+
+    // 添加方向光照
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
+
+    scene.add(ambientLight, directionalLight)
+
+    // 创建辅助坐标系
+    const axesHelper = new THREE.AxesHelper()
+
+    // 创建辅助平面
+    const gridHelper = new THREE.GridHelper()
+
+    scene.add(axesHelper, gridHelper)
 
     // 创建 3D 物体对象
-    const mesh = new THREE.Mesh(geometry, material)
+    const mesh = new THREE.Mesh(geometry, faces)
 
     scene.add(mesh)
 
@@ -41,9 +64,39 @@ export default function Task2() {
     renderer.setSize(width, height)
     renderer.setClearColor('#fff')
 
+    // 设置渲染器屏幕像素比
+    renderer.setPixelRatio(window.devicePixelRatio || 1)
+
     container.appendChild(renderer.domElement)
 
-    renderer.render(scene, camera)
+    // renderer.render(scene, camera)
+
+    // 轨道控制器
+    const orbitControls = new OrbitControls(camera, container)
+
+    orbitControls.enableDamping = true
+
+    const clock = new THREE.Clock()
+
+    const tick = () => {
+      const elapsedTime = clock.getElapsedTime()
+
+      // mesh.rotation.y += elapsedTime / 1000
+      // mesh.position.x += elapsedTime / 1000
+      // mesh.scale.x += elapsedTime / 1000
+
+      // mesh.position.x = Math.cos(elapsedTime)
+      // mesh.position.y = Math.sin(elapsedTime)
+
+      camera.position.x = Math.cos(elapsedTime)
+      camera.position.y = Math.sin(elapsedTime)
+
+      orbitControls.update()
+      renderer.render(scene, camera)
+      window.requestAnimationFrame(tick)
+    }
+
+    tick()
   }, [])
   return <div id="map" className="h-screen"></div>
 }
