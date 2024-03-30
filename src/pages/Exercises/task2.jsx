@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import Stats from 'three/examples/jsm/libs/stats.module'
 
 export default function Task2() {
   console.log('%c Line:5 🍆 Task1', 'color:#7f2b82')
@@ -76,6 +77,11 @@ export default function Task2() {
 
     orbitControls.enableDamping = true
 
+    // 添加性能监视器
+    const stats = new Stats()
+    stats.setMode(0)
+    container.appendChild(stats.domElement)
+
     const clock = new THREE.Clock()
 
     const tick = () => {
@@ -92,11 +98,19 @@ export default function Task2() {
       camera.position.y = Math.sin(elapsedTime)
 
       orbitControls.update()
+      stats.update()
       renderer.render(scene, camera)
       window.requestAnimationFrame(tick)
     }
 
     tick()
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    })
   }, [])
   return <div id="map" className="h-screen"></div>
 }
