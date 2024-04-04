@@ -1,3 +1,10 @@
-export default function Exercise() {
-  return <div>Exercise</div>
+import React from 'react'
+import { Outlet } from 'react-router-dom'
+
+export default function ExerciseWrapper() {
+  return (
+    <>
+      <Outlet />
+    </>
+  )
 }
