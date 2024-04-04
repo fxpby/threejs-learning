@@ -26,6 +26,7 @@ for (let path in files) {
     })
   }
 }
+console.log('routeChildren: ', routeChildren)
 
 const baseRoute = [
   {
