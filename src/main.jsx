@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import MainLayout from './Layouts/MainLayout'
 import ErrorPage from './pages/ErrorPage'
 import ExerciseWrapper from './pages/Exercises'
+import Task1 from '@/pages/Exercises/Task1'
 
 import 'virtual:uno.css'
 import './index.css'
@@ -38,6 +39,10 @@ const baseRoute = [
         path: '/exercise',
         element: <ExerciseWrapper />,
         children: routeChildren,
+      },
+      {
+        path: '/task1',
+        element: <Task1 />,
       },
     ],
   },
