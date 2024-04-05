@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import MainLayout from './Layouts/MainLayout'
 import ErrorPage from './pages/ErrorPage'
 import ExerciseWrapper from './pages/Exercises'
-import Task1 from '@/pages/Exercises/Task1'
+import Task1 from '@/pages/Exercises/task1'
 
 import 'virtual:uno.css'
 import './index.css'
