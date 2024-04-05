@@ -48,7 +48,15 @@ const baseRoute = [
   },
 ]
 
-const router = createBrowserRouter(baseRoute, { basename: '/three-js-demo' })
+const isDev = import.meta.env.MODE === 'development'
+
+let router
+
+if (isDev) {
+  router = createBrowserRouter(baseRoute, { basename: '/three-js-demo' })
+} else {
+  router = createBrowserRouter(baseRoute)
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
