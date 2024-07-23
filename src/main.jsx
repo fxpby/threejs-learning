@@ -6,6 +6,7 @@ import MainLayout from './Layouts/MainLayout'
 import ErrorPage from './pages/ErrorPage'
 import ExerciseWrapper from './pages/Exercises'
 import Task1 from '@/pages/Exercises/task1'
+import Calculator from '@/pages/Calculator'
 
 import 'virtual:uno.css'
 import './index.css'
@@ -43,6 +44,10 @@ const baseRoute = [
       {
         path: '/task1',
         element: <Task1 />,
+      },
+      {
+        path: '/calc',
+        element: <Calculator />,
       },
     ],
   },
