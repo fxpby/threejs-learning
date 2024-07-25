@@ -11,7 +11,6 @@ import {
 const useConfigInitData = () => {
   const [oneRM, setOneRM] = useState(0)
   const [cycle, setCycle] = useState('mxs-1')
-  const [buffer, setBuffer] = useState
   const [tableData, setTableData] = useState([[], []])
 
   const renderTableData = () => {

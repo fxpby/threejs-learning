@@ -20,7 +20,6 @@ import useConfigInitData from '@/hooks/useConfigInitData'
 export default function ConfigArea() {
   const { oneRM, setOneRM, cycle, setCycle, renderTableData } =
     useConfigInitData()
-  console.log(oneRM, '%c Line:30 🍧 setOneRM', 'color:#ffdd4d', setOneRM)
 
   const [rules, setRules] = useState({
     oneRM: {

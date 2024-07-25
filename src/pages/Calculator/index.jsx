@@ -1,5 +1,5 @@
 import React from 'react'
-import ConfigArea from './ConfigArea.jsx'
+import ConfigArea from '@/pages/Calculator/ConfigArea'
 
 export default function Calculator() {
   return (
