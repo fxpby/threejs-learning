@@ -1,6 +1,10 @@
 import React from 'react'
-import ConfigArea from './configArea'
+import ConfigArea from './ConfigArea.jsx'
 
 export default function Calculator() {
-  return <>123</>
+  return (
+    <>
+      <ConfigArea />
+    </>
+  )
 }

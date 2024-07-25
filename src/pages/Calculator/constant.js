@@ -1,13 +1,13 @@
-export const buffer = {
+export const bufferMap = {
   'mxs-1': 0.15,
 }
 
-export const lightTrainingDegree = {
+export const lightTrainingDegreeMap = {
   'mxs-1': 0.7,
   'mxs-2': 0.85,
 }
 
-export const overloadIncreaseDegree = {
+export const overloadIncreaseDegreeMap = {
   'mxs-1': 0.02,
   'mxs-2': 0.05,
 }
