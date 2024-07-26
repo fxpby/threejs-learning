@@ -29,6 +29,8 @@ export const cycleConfig = {
   },
 }
 
+export const deloadWeekIndex = [3, 4]
+
 export const tableColumn = [
   {
     label: '周',
@@ -53,6 +55,10 @@ export const tableColumn = [
   {
     label: '训练负荷',
     id: 'trainingLoad',
+  },
+  {
+    label: '容量',
+    id: 'capacity',
   },
   {
     label: '轻训',
