@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import BaseTable from '@/pages/Calculator/BaseTable'
-import useConfigInitData from '@/hooks/useConfigInitData'
 
-export default function TableArea() {
-  const { tableDataList = [], tableColumn } = useConfigInitData()
+export default function TableArea(props) {
+  const { tableDataList, tableColumn } = props
 
   return (
     <div className="p-8 flex gap-8 flex-col">
       {tableDataList?.map((table, index) => (
         <BaseTable
+          key={index}
           tableIndex={index}
           tableData={table}
           tableColumn={tableColumn}

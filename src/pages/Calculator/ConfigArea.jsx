@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
+  Button,
   Box,
   Flex,
   Stack,
@@ -15,17 +16,15 @@ import {
   Radio,
   RadioGroup,
 } from '@chakra-ui/react'
-import useConfigInitData from '@/hooks/useConfigInitData'
 
-export default function ConfigArea() {
-  const { oneRM, setOneRM, cycle, setCycle, renderTableData } =
-    useConfigInitData()
+export default function ConfigArea(props) {
+  const { oneRM, setOneRM, cycle, setCycle, renderTableData } = props
 
   const [rules, setRules] = useState({
     oneRM: {
-      value: oneRM,
+      value: 0,
       rule: (val) => {
-        return typeof val === 'number'
+        return typeof val === 'number' && !isNaN(val)
       },
     },
   })
@@ -33,12 +32,25 @@ export default function ConfigArea() {
   const verifyRuleHandler = (key) => {
     const func = rules[key]?.rule
     const value = rules[key]?.value
+    console.log('value: ', value)
     return func(value)
   }
 
   useEffect(() => {
     renderTableData()
+  }, [])
+
+  useEffect(() => {
+    renderTableData()
   }, [cycle, oneRM])
+
+  const handler = () => {
+    const input = rules?.oneRM?.value
+
+    if (verifyRuleHandler('oneRM')) {
+      setOneRM(input)
+    }
+  }
 
   return (
     <Flex direction="column" className="p-10 gap-8">
@@ -49,14 +61,24 @@ export default function ConfigArea() {
           <Radio value="mxs-2">mxs-2</Radio>
         </Stack>
       </RadioGroup>
-      <FormControl isInvalid={!verifyRuleHandler('oneRM')}>
-        <FormLabel>请输入目标动作 1RM 的重量(kg)</FormLabel>
+      <FormControl>
+        <FormLabel>请输入目标动作 1RM 的重量</FormLabel>
         <NumberInput
           defaultValue={0}
-          value={oneRM}
+          value={rules.oneRM.value}
           min={0}
           max={500}
-          onChange={(valueAsString, valueAsNumber) => setOneRM(valueAsNumber)}>
+          onChange={(valueAsString, valueAsNumber) =>
+            setRules((prev) => {
+              return {
+                ...prev,
+                oneRM: {
+                  ...prev.oneRM,
+                  value: valueAsNumber,
+                },
+              }
+            })
+          }>
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
@@ -64,6 +86,9 @@ export default function ConfigArea() {
           </NumberInputStepper>
         </NumberInput>
       </FormControl>
+      <Button colorScheme="green" onClick={handler}>
+        Go!
+      </Button>
       {/* <FormControl isInvalid={!verifyRuleHandler('oneRM')}>
         <FormLabel>Week1 组数/次数</FormLabel>
       </FormControl> */}

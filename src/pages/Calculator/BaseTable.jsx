@@ -12,6 +12,9 @@ import {
 
 export default function BaseTable(props) {
   const { tableIndex, tableData, tableColumn } = props
+  const toPercent = (num) => {
+    return `${Number(num * 100).toFixed(2)}%`
+  }
   return (
     <TableContainer>
       <Table variant="simple">
@@ -19,21 +22,26 @@ export default function BaseTable(props) {
         <Thead>
           <Tr>
             {tableColumn.map((col) => (
-              <Th>{col.label}</Th>
+              <Th key={col.id}>{col.label}</Th>
             ))}
           </Tr>
         </Thead>
         <Tbody>
-          {tableData.map((row) => (
-            <Tr>
+          {tableData.map((row, idx) => (
+            <Tr key={idx}>
               <Td>{row.week}</Td>
               <Td>{row.group}</Td>
               <Td>{row.count}</Td>
-              <Td>{row.absoluteStrength}</Td>
-              <Td>{row.relativeStrength}</Td>
-              <Td>{row.trainingLoad}</Td>
-              <Td>{row.capacity}</Td>
-              <Td>{row.lightTraining}</Td>
+              <Td>
+                {row.absoluteStrength[0]}/{toPercent(row.absoluteStrength[1])}
+              </Td>
+              <Td>{toPercent(row.relativeStrength)}</Td>
+              <Td>
+                {row.trainingLoad[0].toFixed(2)}/
+                {toPercent(row.trainingLoad[1])}
+              </Td>
+              <Td>{row.capacity.toFixed(2)}</Td>
+              <Td>{row.lightTraining.toFixed(2)}</Td>
             </Tr>
           ))}
         </Tbody>

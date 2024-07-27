@@ -12,6 +12,10 @@ export const overloadIncreaseDegreeMap = {
   'mxs-2': 0.05,
 }
 
+export const deloadDegreeMap = {
+  'mxs-1': [-0.1, -0.35],
+}
+
 export const cycleConfig = {
   'mxs-1': {
     group: [
