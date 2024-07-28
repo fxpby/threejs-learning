@@ -54,38 +54,86 @@ export default function ConfigArea(props) {
 
   return (
     <Flex direction="column" className="p-10 gap-8">
-      <RadioGroup onChange={setCycle} value={cycle}>
-        请选择中周期阶段：
-        <Stack direction="row">
-          <Radio value="mxs-1">mxs-1</Radio>
-          <Radio value="mxs-2">mxs-2</Radio>
-        </Stack>
-      </RadioGroup>
-      <FormControl>
-        <FormLabel>请输入目标动作 1RM 的重量</FormLabel>
-        <NumberInput
-          defaultValue={0}
-          value={rules.oneRM.value}
-          min={0}
-          max={500}
-          onChange={(valueAsString, valueAsNumber) =>
-            setRules((prev) => {
-              return {
-                ...prev,
-                oneRM: {
-                  ...prev.oneRM,
-                  value: valueAsNumber,
-                },
-              }
-            })
-          }>
-          <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
-      </FormControl>
+      <div className="flex flex-raw gap-20">
+        <RadioGroup onChange={setCycle} value={cycle}>
+          请选择中周期阶段：
+          <Stack direction="row">
+            <Radio value="mxs-1">mxs-1</Radio>
+            <Radio value="mxs-2">mxs-2</Radio>
+          </Stack>
+        </RadioGroup>
+        <RadioGroup onChange={setCycle} value={cycle}>
+          请选择重量单位：
+          <Stack direction="row">
+            <Radio value="kg">kg</Radio>
+            <Radio value="lb">lb</Radio>
+          </Stack>
+        </RadioGroup>
+      </div>
+
+      <div className="flex flex-raw gap-10">
+        <FormControl>
+          <FormLabel>请输入目标动作 1RM 的重量</FormLabel>
+          <NumberInput
+            defaultValue={0}
+            value={rules.oneRM.value}
+            min={0}
+            max={500}
+            onChange={(valueAsString, valueAsNumber) =>
+              setRules((prev) => {
+                return {
+                  ...prev,
+                  oneRM: {
+                    ...prev.oneRM,
+                    value: valueAsNumber,
+                  },
+                }
+              })
+            }>
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+        </FormControl>
+        <FormControl>
+          <FormLabel>请输入中周期循环次数</FormLabel>
+        </FormControl>
+      </div>
+      <div className="flex flex-raw gap-10">
+        <FormControl>
+          <FormLabel>请输入中周期渐进超负荷周数</FormLabel>
+        </FormControl>
+        <FormControl>
+          <FormLabel>请输入中周期减载周数</FormLabel>
+        </FormControl>
+      </div>
+      <div className="flex flex-raw gap-10">
+        <FormControl>
+          <FormLabel>请输入中周期目标动作组数</FormLabel>
+        </FormControl>
+        <FormControl>
+          <FormLabel>请输入中周期目标动作次数</FormLabel>
+        </FormControl>
+      </div>
+      <div className="flex flex-raw gap-10">
+        <FormControl>
+          <FormLabel>请输入中周期缓冲区比率</FormLabel>
+        </FormControl>
+        <FormControl>
+          <FormLabel>请输入中周期轻训强度比率</FormLabel>
+        </FormControl>
+      </div>
+      <div className="flex flex-raw gap-10">
+        <FormControl>
+          <FormLabel>请输入中周期渐进超负荷强度递增比率</FormLabel>
+        </FormControl>
+        <FormControl>
+          <FormLabel>请输入中周期减载递减比率</FormLabel>
+        </FormControl>
+      </div>
+
       <Button colorScheme="green" onClick={handler}>
         Go!
       </Button>
