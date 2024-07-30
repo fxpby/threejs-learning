@@ -98,7 +98,7 @@ const useConfigInitData = () => {
             relativeStrength =
               rowIdx === 0
                 ? baseRelativeStrength
-                : beforeRelativeStrength + overloadIncreaseDegree
+                : beforeRelativeStrength + overloadIncreaseDegree[rowIdx]
           }
           if (col.id === 'relativeStrength') {
             result[col.id] = relativeStrength
@@ -127,9 +127,10 @@ const useConfigInitData = () => {
       group: group[0],
       count: count[0],
     })
-
+    // TODO 衔接overloadIncreaseDegree比率待设置
     const baseRelativeStrength2 =
-      table1[deloadWeekIndex[0] - 1]?.relativeStrength + overloadIncreaseDegree
+      table1[deloadWeekIndex[0] - 1]?.relativeStrength +
+      overloadIncreaseDegree[0]
     const rowLength2 = group[1].length
 
     const table2 = getTableData({
