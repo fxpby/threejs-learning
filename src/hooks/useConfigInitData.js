@@ -13,14 +13,37 @@ import {
 const useConfigInitData = () => {
   const [oneRM, setOneRM] = useState(0)
   const [cycle, setCycle] = useState('mxs-1')
+  const [unit, setUnit] = useState('kg')
+  // 循环次数
+  const [cycleCount, setCycleCount] = useState(2)
+  const [progressiveOverloadWeekCount, setProgressiveOverloadWeekCount] =
+    useState(3)
+  const [deloadWeekCount, setDeloadWeekCount] = useState(2)
+  // 减载是否分段
+  const [isdeloadWeekBreak, setIsdeloadWeekBreak] = useState(true)
+  const [group, setGroup] = useState([
+    [4, 5, 5, 3, 5],
+    [4, 4, 4, 3, 5],
+  ])
+  const [count, setCount] = useState([
+    [6, 5, 5, 5, 5],
+    [5, 4, 3, 3, 3],
+  ])
+  const [buffer, setBuffer] = useState(0.15)
+  const [lightTrainingDegree, setLightTrainingDegree] = useState(0.7)
+  const [overloadIncreaseDegree, setOverloadIncreaseDegree] = useState([
+    0.02, 0.02, 0.02,
+  ])
+  const [deloadDegree, setDeloadDegree] = useState([-0.1, -0.35])
+
   const [tableDataList, setTableDataList] = useState(null)
 
   const renderTableData = () => {
-    const { group, count } = cycleConfig[cycle]
-    const buffer = bufferMap[cycle]
-    const lightTrainingDegree = lightTrainingDegreeMap[cycle]
-    const overloadIncreaseDegree = overloadIncreaseDegreeMap[cycle]
-    const deloadDegree = deloadDegreeMap[cycle]
+    // const { group, count } = cycleConfig[cycle]
+    // const buffer = bufferMap[cycle]
+    // const lightTrainingDegree = lightTrainingDegreeMap[cycle]
+    // const overloadIncreaseDegree = overloadIncreaseDegreeMap[cycle]
+    // const deloadDegree = deloadDegreeMap[cycle]
     // TODO 取值方式待优化
     const rowLength1 = group[0].length
     const getTableData = ({
@@ -128,6 +151,28 @@ const useConfigInitData = () => {
     tableDataList,
     tableColumn,
     setTableDataList,
+    unit,
+    setUnit,
+    cycleCount,
+    setCycleCount,
+    progressiveOverloadWeekCount,
+    setProgressiveOverloadWeekCount,
+    deloadWeekCount,
+    setDeloadWeekCount,
+    group,
+    setGroup,
+    count,
+    setCount,
+    buffer,
+    setBuffer,
+    lightTrainingDegree,
+    setLightTrainingDegree,
+    overloadIncreaseDegree,
+    setOverloadIncreaseDegree,
+    deloadDegree,
+    setDeloadDegree,
+    isdeloadWeekBreak,
+    setIsdeloadWeekBreak,
   }
 }
 
