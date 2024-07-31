@@ -20,8 +20,35 @@ import {
 } from '@chakra-ui/react'
 
 export default function ConfigArea(props) {
-  const { oneRM, setOneRM, cycle, setCycle, renderTableData, unit, setUnit } =
-    props
+  const {
+    oneRM,
+    setOneRM,
+    cycle,
+    setCycle,
+    renderTableData,
+    unit,
+    setUnit,
+    cycleCount,
+    setCycleCount,
+    progressiveOverloadWeekCount,
+    setProgressiveOverloadWeekCount,
+    deloadWeekCount,
+    setDeloadWeekCount,
+    group,
+    setGroup,
+    count,
+    setCount,
+    buffer,
+    setBuffer,
+    lightTrainingDegree,
+    setLightTrainingDegree,
+    overloadIncreaseDegree,
+    setOverloadIncreaseDegree,
+    deloadDegree,
+    setDeloadDegree,
+    isdeloadWeekBreak,
+    setIsdeloadWeekBreak,
+  } = props
 
   const [rules, setRules] = useState({
     oneRM: {
@@ -29,72 +56,84 @@ export default function ConfigArea(props) {
       rule: (val) => {
         return typeof val === 'number' && !isNaN(val)
       },
+      setter: setOneRM,
     },
     unit: {
       value: 'kg',
       rule: (val) => {
         return true
       },
+      setter: setUnit,
     },
     cycleCount: {
-      value: 1,
+      value: 2,
       rule: (val) => {
         return typeof val === 'number' && !isNaN(val)
       },
+      setter: setCycle,
     },
     progressiveOverloadWeekCount: {
       value: 0,
       rule: (val) => {
         return typeof val === 'number' && !isNaN(val)
       },
+      setter: setProgressiveOverloadWeekCount,
     },
     deloadWeekCount: {
       value: 0,
       rule: (val) => {
         return typeof val === 'number' && !isNaN(val)
       },
+      setter: setDeloadWeekCount,
     },
     isdeloadWeekBreak: {
       value: false,
       rule: (val) => {
         return true
       },
+      setter: setIsdeloadWeekBreak,
     },
     group: {
       value: [],
       rule: (val) => {
         return true
       },
+      setter: setGroup,
     },
     count: {
       value: [],
       rule: (val) => {
         return true
       },
+      setter: setCount,
     },
     buffer: {
       value: 0,
       rule: (val) => {
         return true
       },
+      setter: setBuffer,
     },
     lightTrainingDegree: {
       value: 0,
       rule: (val) => {
         return true
       },
+      setter: setLightTrainingDegree,
     },
     overloadIncreaseDegree: {
       value: [],
       rule: (val) => {
         return true
       },
+      setter: setOverloadIncreaseDegree,
     },
     deloadDegree: {
       value: [],
       rule: (val) => {
         return true
       },
+      setter: setDeloadDegree,
     },
   })
 
@@ -105,22 +144,82 @@ export default function ConfigArea(props) {
     return func(value)
   }
 
+  const initConfigData = () => {
+    setRules((prev) => {
+      return {
+        ...prev,
+        oneRM: {
+          ...prev.oneRM,
+          value: oneRM,
+        },
+        unit: {
+          ...prev.unit,
+          value: unit,
+        },
+        cycleCount: {
+          ...prev.cycleCount,
+          value: cycleCount,
+        },
+        progressiveOverloadWeekCount: {
+          ...prev.progressiveOverloadWeekCount,
+          value: progressiveOverloadWeekCount,
+        },
+        deloadWeekCount: {
+          ...prev.deloadWeekCount,
+          value: deloadWeekCount,
+        },
+        isdeloadWeekBreak: {
+          ...prev.isdeloadWeekBreak,
+          value: isdeloadWeekBreak,
+        },
+        group: {
+          ...prev.group,
+          value: group,
+        },
+        count: {
+          ...prev.count,
+          value: count,
+        },
+        buffer: {
+          ...prev.buffer,
+          value: buffer,
+        },
+        lightTrainingDegree: {
+          ...prev.lightTrainingDegree,
+          value: lightTrainingDegree,
+        },
+        overloadIncreaseDegree: {
+          ...prev.overloadIncreaseDegree,
+          value: overloadIncreaseDegree,
+        },
+        deloadDegree: {
+          ...prev.deloadDegree,
+          value: deloadDegree,
+        },
+      }
+    })
+  }
+
   useEffect(() => {
+    initConfigData()
     renderTableData()
   }, [])
 
-  useEffect(() => {
-    renderTableData()
-  }, [cycle])
+  // useEffect(() => {
+  //   renderTableData()
+  // }, [cycle])
 
   // useEffect(() => {}, [rules.cycleCount.value])
 
   const handler = () => {
-    const input = rules?.oneRM?.value
+    Object.keys(rules).forEach((configName) => {
+      if (verifyRuleHandler(configName)) {
+        console.log('%c Line:217 🍅 configName', 'color:#f5ce50', configName)
+        rules[configName]?.setter(rules[configName]?.value)
+      }
+    })
 
-    if (verifyRuleHandler('oneRM')) {
-      setOneRM(input)
-    }
+    // renderTableData()
   }
 
   const deloadWeekIndex = useCallback(() => {
@@ -295,7 +394,7 @@ export default function ConfigArea(props) {
                             </span>
                             <NumberInput
                               defaultValue={0}
-                              value={rules.group.value[i]}
+                              value={rules.group.value[cIdx][i]}
                               min={0}
                               max={500}
                               onChange={(valueAsString, valueAsNumber) =>
@@ -355,7 +454,7 @@ export default function ConfigArea(props) {
 
                             <NumberInput
                               defaultValue={0}
-                              value={rules.count.value[i]}
+                              value={rules.count.value[cIdx][i]}
                               min={0}
                               max={500}
                               onChange={(valueAsString, valueAsNumber) =>
@@ -428,6 +527,8 @@ export default function ConfigArea(props) {
                             {`循环${cIdx + 1}`}-{getWeekLabel(i)}
                           </span>
                           <NumberInput
+                            precision={2}
+                            step={0.01}
                             defaultValue={0}
                             value={rules.overloadIncreaseDegree.value[i]}
                             min={0}
@@ -479,6 +580,8 @@ export default function ConfigArea(props) {
                             )}
                           </span>
                           <NumberInput
+                            precision={2}
+                            step={0.01}
                             defaultValue={0}
                             value={rules.deloadDegree.value[i]}
                             min={0}
@@ -522,6 +625,8 @@ export default function ConfigArea(props) {
                 <VStack key={cIdx} align="normal">
                   <span>{`循环${cIdx + 1}`}</span>
                   <NumberInput
+                    precision={2}
+                    step={0.01}
                     defaultValue={0}
                     value={rules.buffer.value}
                     min={0}
@@ -552,6 +657,8 @@ export default function ConfigArea(props) {
                 <VStack key={cIdx} align="normal">
                   <span>{`循环${cIdx + 1}`}</span>
                   <NumberInput
+                    precision={2}
+                    step={0.01}
                     defaultValue={0}
                     value={rules.lightTrainingDegree.value}
                     min={0}

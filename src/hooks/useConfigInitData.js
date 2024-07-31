@@ -11,8 +11,9 @@ import {
 } from '@/pages/Calculator/constant'
 
 const useConfigInitData = () => {
-  const [oneRM, setOneRM] = useState(0)
+  const [oneRM, setOneRM] = useState(100)
   const [cycle, setCycle] = useState('mxs-1')
+
   const [unit, setUnit] = useState('kg')
   // 循环次数
   const [cycleCount, setCycleCount] = useState(2)
