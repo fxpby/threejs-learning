@@ -209,17 +209,17 @@ export default function ConfigArea(props) {
   //   renderTableData()
   // }, [cycle])
 
-  // useEffect(() => {}, [rules.cycleCount.value])
+  useEffect(() => {
+    renderTableData()
+  }, [oneRM, cycleCount, unit])
 
   const handler = () => {
     Object.keys(rules).forEach((configName) => {
       if (verifyRuleHandler(configName)) {
-        console.log('%c Line:217 🍅 configName', 'color:#f5ce50', configName)
         rules[configName]?.setter(rules[configName]?.value)
       }
     })
-
-    // renderTableData()
+    // setOneRM(rules.oneRM.value)
   }
 
   const deloadWeekIndex = useCallback(() => {
@@ -254,7 +254,19 @@ export default function ConfigArea(props) {
             <Radio value="mxs-2">mxs-2</Radio>
           </Stack>
         </RadioGroup> */}
-          <RadioGroup onChange={setUnit} value={unit}>
+          <RadioGroup
+            onChange={(val) =>
+              setRules((prev) => {
+                return {
+                  ...prev,
+                  unit: {
+                    ...prev.unit,
+                    value: val,
+                  },
+                }
+              })
+            }
+            value={rules.unit.value}>
             请选择重量单位：
             <Stack direction="row">
               <Radio value="kg">kg</Radio>
@@ -403,11 +415,17 @@ export default function ConfigArea(props) {
                                     ...prev,
                                     group: {
                                       ...prev.group,
-                                      value: prev.group.value.map((g, idx) => {
-                                        if (idx === i) {
-                                          g = valueAsNumber
+                                      value: prev.group.value.map((x, xi) => {
+                                        if (xi === cIdx) {
+                                          return x.map((g, gi) => {
+                                            if (gi === i) {
+                                              g = valueAsNumber
+                                            }
+                                            return g
+                                          })
+                                        } else {
+                                          return x
                                         }
-                                        return g
                                       }),
                                     },
                                   }
@@ -463,11 +481,17 @@ export default function ConfigArea(props) {
                                     ...prev,
                                     count: {
                                       ...prev.count,
-                                      value: prev.count.value.map((g, idx) => {
-                                        if (idx === i) {
-                                          g = valueAsNumber
+                                      value: prev.count.value.map((x, xi) => {
+                                        if (xi === cIdx) {
+                                          return x.map((g, gi) => {
+                                            if (gi === i) {
+                                              g = valueAsNumber
+                                            }
+                                            return g
+                                          })
+                                        } else {
+                                          return x
                                         }
-                                        return g
                                       }),
                                     },
                                   }
@@ -584,7 +608,7 @@ export default function ConfigArea(props) {
                             step={0.01}
                             defaultValue={0}
                             value={rules.deloadDegree.value[i]}
-                            min={0}
+                            min={-100}
                             max={500}
                             onChange={(valueAsString, valueAsNumber) =>
                               setRules((prev) => {
@@ -619,38 +643,6 @@ export default function ConfigArea(props) {
         </HStack>
         <HStack spacing="20px">
           <Flex w="50%" gap="20px">
-            <FormControl display="flex" flexDirection="column">
-              <FormLabel>请输入中周期缓冲区比率</FormLabel>
-              {new Array(rules.cycleCount.value).fill().map((c, cIdx) => (
-                <VStack key={cIdx} align="normal">
-                  <span>{`循环${cIdx + 1}`}</span>
-                  <NumberInput
-                    precision={2}
-                    step={0.01}
-                    defaultValue={0}
-                    value={rules.buffer.value}
-                    min={0}
-                    max={500}
-                    onChange={(valueAsString, valueAsNumber) =>
-                      setRules((prev) => {
-                        return {
-                          ...prev,
-                          buffer: {
-                            ...prev.buffer,
-                            value: valueAsNumber,
-                          },
-                        }
-                      })
-                    }>
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </VStack>
-              ))}
-            </FormControl>
             <FormControl>
               <FormLabel>请输入中周期轻训强度比率</FormLabel>
               {new Array(rules.cycleCount.value).fill().map((c, cIdx) => (
@@ -682,6 +674,35 @@ export default function ConfigArea(props) {
                   </NumberInput>
                 </VStack>
               ))}
+            </FormControl>
+            <FormControl display="flex" flexDirection="column">
+              <FormLabel>请输入中周期缓冲区比率</FormLabel>
+              <VStack align="normal">
+                <NumberInput
+                  precision={2}
+                  step={0.01}
+                  defaultValue={0}
+                  value={rules.buffer.value}
+                  min={0}
+                  max={500}
+                  onChange={(valueAsString, valueAsNumber) =>
+                    setRules((prev) => {
+                      return {
+                        ...prev,
+                        buffer: {
+                          ...prev.buffer,
+                          value: valueAsNumber,
+                        },
+                      }
+                    })
+                  }>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </VStack>
             </FormControl>
           </Flex>
         </HStack>

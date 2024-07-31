@@ -1,16 +1,8 @@
 import { useState } from 'react'
-import {
-  cycleConfig,
-  bufferMap,
-  lightTrainingDegreeMap,
-  overloadIncreaseDegreeMap,
-  RMCountRelation,
-  tableColumn,
-  deloadWeekIndex,
-  deloadDegreeMap,
-} from '@/pages/Calculator/constant'
+import { RMCountRelation, tableColumn } from '@/pages/Calculator/constant'
 
 const useConfigInitData = () => {
+  // TODO 衔接overloadIncreaseDegree比率待设置
   const [oneRM, setOneRM] = useState(100)
   const [cycle, setCycle] = useState('mxs-1')
 
@@ -31,7 +23,7 @@ const useConfigInitData = () => {
     [5, 4, 3, 3, 3],
   ])
   const [buffer, setBuffer] = useState(0.15)
-  const [lightTrainingDegree, setLightTrainingDegree] = useState(0.7)
+  const [lightTrainingDegree, setLightTrainingDegree] = useState([0.7, 0.7])
   const [overloadIncreaseDegree, setOverloadIncreaseDegree] = useState([
     0.02, 0.02, 0.02,
   ])
@@ -39,31 +31,37 @@ const useConfigInitData = () => {
 
   const [tableDataList, setTableDataList] = useState(null)
 
+  const deloadWeekIndex = () => {
+    const overLoadCount = progressiveOverloadWeekCount
+    return new Array(deloadWeekCount).fill()?.map((x, i) => overLoadCount + i)
+  }
+
   const renderTableData = () => {
-    // const { group, count } = cycleConfig[cycle]
-    // const buffer = bufferMap[cycle]
-    // const lightTrainingDegree = lightTrainingDegreeMap[cycle]
-    // const overloadIncreaseDegree = overloadIncreaseDegreeMap[cycle]
-    // const deloadDegree = deloadDegreeMap[cycle]
-    // TODO 取值方式待优化
-    const rowLength1 = group[0].length
     const getTableData = ({
       rowLength,
-      baseRelativeStrength,
+      // baseRelativeStrength,
       group,
       count,
+      tIdx,
     } = {}) => {
       const initTable = new Array(rowLength).fill()
-      let previousRowTable1 = {}
+      let previousRowTable = {}
+      const baseRelativeStrengthFirst = 1 - buffer
+      const baseRelativeStrengthOther =
+        prevTable[deloadWeekIndex()[0] - 1]?.relativeStrength +
+        overloadIncreaseDegree[0]
+      let baseRelativeStrength =
+        tIdx === 0 ? baseRelativeStrengthFirst : baseRelativeStrengthOther
+
       return initTable.map((row, rowIdx) => {
         const result = {}
         tableColumn.forEach((col) => {
-          const isDeloadWeek = deloadWeekIndex?.includes(rowIdx)
-          const currentDeloadWeekIdx = deloadWeekIndex.findIndex(
+          const isDeloadWeek = deloadWeekIndex()?.includes(rowIdx)
+          const currentDeloadWeekIdx = deloadWeekIndex().findIndex(
             (x) => x === rowIdx,
           )
           if (col.id === 'week') {
-            const deloadStart = deloadWeekIndex[0]
+            const deloadStart = deloadWeekIndex()[0]
 
             if (isDeloadWeek) {
               result[col.id] = `W-${deloadStart + 1}.${
@@ -90,7 +88,7 @@ const useConfigInitData = () => {
           const beforeRelativeStrength =
             rowIdx === 0
               ? baseRelativeStrength
-              : previousRowTable1?.relativeStrength
+              : previousRowTable?.relativeStrength
           let relativeStrength
           if (isDeloadWeek) {
             relativeStrength =
@@ -116,32 +114,25 @@ const useConfigInitData = () => {
             result[col.id] = lightTrainingDegree * trainingLoadWeight
           }
         })
-        previousRowTable1 = result
+        previousRowTable = result
         return result
       })
     }
-    const baseRelativeStrength1 = 1 - buffer
 
-    const table1 = getTableData({
-      rowLength: rowLength1,
-      baseRelativeStrength: baseRelativeStrength1,
-      group: group[0],
-      count: count[0],
-    })
-    // TODO 衔接overloadIncreaseDegree比率待设置
-    const baseRelativeStrength2 =
-      table1[deloadWeekIndex[0] - 1]?.relativeStrength +
-      overloadIncreaseDegree[0]
-    const rowLength2 = group[1].length
+    let prevTable = []
 
-    const table2 = getTableData({
-      rowLength: rowLength2,
-      baseRelativeStrength: baseRelativeStrength2,
-      group: group[1],
-      count: count[1],
+    const totalTableList = new Array(cycleCount).fill().map((table, tIdx) => {
+      const result = getTableData({
+        rowLength: group[tIdx].length,
+        tIdx,
+        group: group[tIdx],
+        count: count[tIdx],
+      })
+      prevTable = result
+      return result
     })
 
-    setTableDataList([table1, table2])
+    setTableDataList(totalTableList)
   }
 
   return {
