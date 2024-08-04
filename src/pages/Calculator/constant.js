@@ -35,6 +35,34 @@ export const cycleConfig = {
 
 export const deloadWeekIndex = [3, 4]
 
+export const defaultRule = {
+  oneRM: 100,
+  unit: 'kg',
+  cycleCount: 2,
+  progressiveOverloadWeekCount: 3,
+  deloadWeekCount: 2,
+  isdeloadWeekBreak: true,
+  group: [
+    [4, 5, 5, 3, 5],
+    [4, 4, 4, 3, 5],
+  ],
+  count: [
+    [6, 5, 5, 5, 5],
+    [5, 4, 3, 3, 3],
+  ],
+  buffer: 0.15,
+  lightTrainingDegree: [0.7, 0.7],
+  overloadIncreaseDegree: [
+    [0.02, 0.02, 0.02],
+    [0.02, 0.02, 0.02],
+  ],
+  deloadDegree: [
+    [-0.1, -0.35],
+    [-0.1, -0.35],
+  ],
+  cycleConnection: [0.2],
+}
+
 export const tableColumn = [
   {
     label: '周',

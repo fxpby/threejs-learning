@@ -18,6 +18,7 @@ import {
   HStack,
   VStack,
 } from '@chakra-ui/react'
+import { defaultRule } from '@/pages/Calculator/constant'
 
 export default function ConfigArea(props) {
   const {
@@ -48,6 +49,8 @@ export default function ConfigArea(props) {
     setDeloadDegree,
     isdeloadWeekBreak,
     setIsdeloadWeekBreak,
+    cycleConnection,
+    setCycleConnection,
   } = props
 
   const [rules, setRules] = useState({
@@ -70,7 +73,7 @@ export default function ConfigArea(props) {
       rule: (val) => {
         return typeof val === 'number' && !isNaN(val)
       },
-      setter: setCycle,
+      setter: setCycleCount,
     },
     progressiveOverloadWeekCount: {
       value: 0,
@@ -135,6 +138,13 @@ export default function ConfigArea(props) {
       },
       setter: setDeloadDegree,
     },
+    cycleConnection: {
+      value: [],
+      rule: (val) => {
+        return true
+      },
+      setter: setCycleConnection,
+    },
   })
 
   const verifyRuleHandler = (key) => {
@@ -150,70 +160,89 @@ export default function ConfigArea(props) {
         ...prev,
         oneRM: {
           ...prev.oneRM,
-          value: oneRM,
+          value: defaultRule.oneRM,
         },
         unit: {
           ...prev.unit,
-          value: unit,
+          value: defaultRule.unit,
         },
         cycleCount: {
           ...prev.cycleCount,
-          value: cycleCount,
+          value: defaultRule.cycleCount,
         },
         progressiveOverloadWeekCount: {
           ...prev.progressiveOverloadWeekCount,
-          value: progressiveOverloadWeekCount,
+          value: defaultRule.progressiveOverloadWeekCount,
         },
         deloadWeekCount: {
           ...prev.deloadWeekCount,
-          value: deloadWeekCount,
+          value: defaultRule.deloadWeekCount,
         },
         isdeloadWeekBreak: {
           ...prev.isdeloadWeekBreak,
-          value: isdeloadWeekBreak,
+          value: defaultRule.isdeloadWeekBreak,
         },
         group: {
           ...prev.group,
-          value: group,
+          value: defaultRule.group,
         },
         count: {
           ...prev.count,
-          value: count,
+          value: defaultRule.count,
         },
         buffer: {
           ...prev.buffer,
-          value: buffer,
+          value: defaultRule.buffer,
         },
         lightTrainingDegree: {
           ...prev.lightTrainingDegree,
-          value: lightTrainingDegree,
+          value: defaultRule.lightTrainingDegree,
         },
         overloadIncreaseDegree: {
           ...prev.overloadIncreaseDegree,
-          value: overloadIncreaseDegree,
+          value: defaultRule.overloadIncreaseDegree,
         },
         deloadDegree: {
           ...prev.deloadDegree,
-          value: deloadDegree,
+          value: defaultRule.deloadDegree,
+        },
+        cycleConnection: {
+          ...prev.cycleConnection,
+          value: defaultRule.cycleConnection,
         },
       }
     })
   }
 
-  useEffect(() => {
+  const initialize = () => {
     initConfigData()
     renderTableData()
-  }, [])
+  }
 
-  // useEffect(() => {
-  //   renderTableData()
-  // }, [cycle])
+  useEffect(() => {
+    initialize()
+  }, [])
 
   useEffect(() => {
     renderTableData()
-  }, [oneRM, cycleCount, unit])
+  }, [
+    oneRM,
+    unit,
+    group,
+    count,
+    isdeloadWeekBreak,
+    cycleConnection,
+    deloadDegree,
+    overloadIncreaseDegree,
+    lightTrainingDegree,
+    buffer,
+    deloadWeekCount,
+    progressiveOverloadWeekCount,
+    cycleCount,
+  ])
 
   const handler = () => {
+    console.log('rules: ', rules)
     Object.keys(rules).forEach((configName) => {
       if (verifyRuleHandler(configName)) {
         rules[configName]?.setter(rules[configName]?.value)
@@ -246,7 +275,7 @@ export default function ConfigArea(props) {
   return (
     <VStack spacing="24px" align="normal">
       <Box p="24px" display="flex" flexDirection="column" gap="20px">
-        <HStack spacing="20px">
+        <HStack spacing="20px" justifyContent="space-between">
           {/* <RadioGroup onChange={setCycle} value={cycle}>
           请选择中周期阶段：
           <Stack direction="row">
@@ -273,9 +302,10 @@ export default function ConfigArea(props) {
               <Radio value="lb">lb</Radio>
             </Stack>
           </RadioGroup>
+          <Button onClick={() => initialize()}>恢复默认数据</Button>
         </HStack>
         <HStack spacing="20px">
-          <Box w="25%">
+          <Box w="20%">
             <FormControl>
               <FormLabel>请输入目标动作 1RM 的重量</FormLabel>
               <NumberInput
@@ -302,7 +332,7 @@ export default function ConfigArea(props) {
               </NumberInput>
             </FormControl>
           </Box>
-          <Box w="25%">
+          <Box w="20%">
             <FormControl>
               <FormLabel>请输入中周期循环次数</FormLabel>
               <NumberInput
@@ -312,11 +342,81 @@ export default function ConfigArea(props) {
                 max={10}
                 onChange={(valueAsString, valueAsNumber) =>
                   setRules((prev) => {
+                    const newGroupValue = prev.group.value.slice() // 创建一个副本以避免直接修改原数组
+                    const newCountValue = prev.count.value.slice() // 创建一个副本以避免直接修改原数组
+                    const newLightTrainingDegree =
+                      prev.lightTrainingDegree.value.slice() // 创建一个副本以避免直接修改原数组
+                    const newCycleConnection =
+                      prev.cycleConnection.value.slice() // 创建一个副本以避免直接修改原数组
+                    const newOverloadIncreaseDegree =
+                      prev.overloadIncreaseDegree.value.slice() // 创建一个副本以避免直接修改原数组
+
+                    const newDeloadDegree = prev.deloadDegree.value.slice() // 创建一个副本以避免直接修改原数组
+
+                    const diff = valueAsNumber - rules.cycleCount.value
+
+                    if (diff > 0) {
+                      for (let i = 0; i < diff; i++) {
+                        newGroupValue.push(
+                          new Array(
+                            rules.progressiveOverloadWeekCount.value +
+                              rules.deloadWeekCount.value,
+                          ).fill(3),
+                        )
+                        newCountValue.push(
+                          new Array(
+                            rules.progressiveOverloadWeekCount.value +
+                              rules.deloadWeekCount.value,
+                          ).fill(3),
+                        )
+                        newLightTrainingDegree.push(0.7)
+                        newCycleConnection.push(0.2)
+                        newOverloadIncreaseDegree.push(
+                          new Array(
+                            rules.progressiveOverloadWeekCount.value,
+                          ).fill(0.02),
+                        )
+                        newDeloadDegree.push(
+                          new Array(rules.deloadWeekCount.value).fill(0.02),
+                        )
+                      }
+                    } else if (diff < 0) {
+                      newGroupValue.splice(valueAsNumber) // 截断数组至新长度
+                      newCountValue.splice(valueAsNumber) // 截断数组至新长度
+                      newLightTrainingDegree.splice(valueAsNumber)
+                      newCycleConnection.splice(valueAsNumber)
+                      newOverloadIncreaseDegree.splice(valueAsNumber)
+                      newDeloadDegree.splice(valueAsNumber)
+                    }
                     return {
                       ...prev,
                       cycleCount: {
                         ...prev.cycleCount,
                         value: valueAsNumber,
+                      },
+                      group: {
+                        ...prev.group,
+                        value: newGroupValue,
+                      },
+                      count: {
+                        ...prev.count,
+                        value: newCountValue,
+                      },
+                      lightTrainingDegree: {
+                        ...prev.lightTrainingDegree,
+                        value: newLightTrainingDegree,
+                      },
+                      cycleConnection: {
+                        ...prev.cycleConnection,
+                        value: newCycleConnection,
+                      },
+                      overloadIncreaseDegree: {
+                        ...prev.overloadIncreaseDegree,
+                        value: newOverloadIncreaseDegree,
+                      },
+                      deloadDegree: {
+                        ...prev.deloadDegree,
+                        value: newDeloadDegree,
                       },
                     }
                   })
@@ -329,21 +429,107 @@ export default function ConfigArea(props) {
               </NumberInput>
             </FormControl>
           </Box>
-          <Box w="25%">
+          <Box w="20%">
             <FormControl>
               <FormLabel>请输入中周期渐进超负荷周数</FormLabel>
               <NumberInput
                 defaultValue={0}
                 value={rules.progressiveOverloadWeekCount.value}
-                min={0}
+                min={1}
                 max={500}
                 onChange={(valueAsString, valueAsNumber) =>
                   setRules((prev) => {
+                    let newGroupValue = prev.group.value.slice() // 创建一个副本以避免直接修改原数组
+                    let newCountValue = prev.count.value.slice() // 创建一个副本以避免直接修改原数组
+                    let newOverloadIncreaseDegree =
+                      prev.overloadIncreaseDegree.value.slice() // 创建一个副本以避免直接修改原数组
+
+                    const diff =
+                      valueAsNumber - rules.progressiveOverloadWeekCount.value
+
+                    if (diff > 0) {
+                      for (let i = 0; i < diff; i += 1) {
+                        const _g = newGroupValue[i]
+                        const _c = newCountValue[i]
+
+                        const prev_g = _g.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value,
+                        )
+                        const behind_g = _g.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _g.length,
+                        )
+                        const prev_c = _c.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value,
+                        )
+                        const behind_c = _c.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _c.length,
+                        )
+
+                        newGroupValue = newGroupValue.map(() => {
+                          return [...prev_g, 1, ...behind_g]
+                        })
+                        newCountValue = newCountValue.map(() => {
+                          return [...prev_c, 1, ...behind_c]
+                        })
+                      }
+                      newOverloadIncreaseDegree.forEach((item) => {
+                        item.push(0.02)
+                        return item
+                      })
+                    } else if (diff < 0) {
+                      for (let i = 0; i < Math.abs(diff); i += 1) {
+                        const _g = newGroupValue[i]
+                        const _c = newCountValue[i]
+                        const prev_g = _g.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value + diff,
+                        )
+                        const behind_g = _g.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _g.length,
+                        )
+                        const prev_c = _c.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value + diff,
+                        )
+                        const behind_c = _c.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _c.length,
+                        )
+                        newGroupValue = newGroupValue.map(() => {
+                          return [...prev_g, ...behind_g]
+                        })
+                        newCountValue = newCountValue.map(() => {
+                          return [...prev_c, ...behind_c]
+                        })
+                      }
+
+                      newOverloadIncreaseDegree.forEach((item) => {
+                        item.splice(valueAsNumber)
+                      })
+                    }
+
                     return {
                       ...prev,
                       progressiveOverloadWeekCount: {
                         ...prev.progressiveOverloadWeekCount,
                         value: valueAsNumber,
+                      },
+                      group: {
+                        ...prev.group,
+                        value: newGroupValue,
+                      },
+                      count: {
+                        ...prev.count,
+                        value: newCountValue,
+                      },
+                      overloadIncreaseDegree: {
+                        ...prev.overloadIncreaseDegree,
+                        value: newOverloadIncreaseDegree,
                       },
                     }
                   })
@@ -357,21 +543,103 @@ export default function ConfigArea(props) {
             </FormControl>
           </Box>
 
-          <Box w="25%">
+          <Box w="20%">
             <FormControl>
               <FormLabel>请输入中周期减载周数</FormLabel>
               <NumberInput
                 defaultValue={0}
                 value={rules.deloadWeekCount.value}
-                min={0}
+                min={1}
                 max={500}
                 onChange={(valueAsString, valueAsNumber) =>
                   setRules((prev) => {
+                    let newGroupValue = prev.group.value.slice() // 创建一个副本以避免直接修改原数组
+                    let newCountValue = prev.count.value.slice() // 创建一个副本以避免直接修改原数组
+                    let newDeloadDegree = prev.deloadDegree.value.slice()
+                    const diff = valueAsNumber - rules.deloadWeekCount.value
+
+                    if (diff > 0) {
+                      for (let i = 0; i < diff; i += 1) {
+                        const _g = newGroupValue[i]
+                        const _c = newCountValue[i]
+
+                        const prev_g = _g.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value,
+                        )
+                        const behind_g = _g.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _g.length,
+                        )
+                        const prev_c = _c.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value,
+                        )
+                        const behind_c = _c.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _c.length,
+                        )
+
+                        newGroupValue = newGroupValue.map(() => {
+                          return [...prev_g, ...behind_g, 1]
+                        })
+                        newCountValue = newCountValue.map(() => {
+                          return [...prev_c, ...behind_c, 1]
+                        })
+                      }
+                      newDeloadDegree.forEach((item) => {
+                        item.push(0.1)
+                        return item
+                      })
+                    } else if (diff < 0) {
+                      for (let i = 0; i < Math.abs(diff); i += 1) {
+                        const _g = newGroupValue[i]
+                        const _c = newCountValue[i]
+                        const prev_g = _g.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value,
+                        )
+                        const behind_g = _g.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _g.length + diff,
+                        )
+                        const prev_c = _c.slice(
+                          0,
+                          rules.progressiveOverloadWeekCount.value,
+                        )
+                        const behind_c = _c.slice(
+                          rules.progressiveOverloadWeekCount.value,
+                          _c.length + diff,
+                        )
+                        newGroupValue = newGroupValue.map(() => {
+                          return [...prev_g, ...behind_g]
+                        })
+                        newCountValue = newCountValue.map(() => {
+                          return [...prev_c, ...behind_c]
+                        })
+                      }
+
+                      newDeloadDegree.forEach((item) => {
+                        item.splice(valueAsNumber)
+                      })
+                    }
                     return {
                       ...prev,
                       deloadWeekCount: {
                         ...prev.deloadWeekCount,
                         value: valueAsNumber,
+                      },
+                      group: {
+                        ...prev.group,
+                        value: newGroupValue,
+                      },
+                      count: {
+                        ...prev.count,
+                        value: newCountValue,
+                      },
+                      deloadDegree: {
+                        ...prev.deloadDegree,
+                        value: newDeloadDegree,
                       },
                     }
                   })
@@ -382,6 +650,37 @@ export default function ConfigArea(props) {
                   <NumberDecrementStepper />
                 </NumberInputStepper>
               </NumberInput>
+            </FormControl>
+          </Box>
+          <Box w="20%">
+            <FormControl display="flex" flexDirection="column">
+              <FormLabel>请输入中周期缓冲区比率</FormLabel>
+              <VStack align="normal">
+                <NumberInput
+                  precision={2}
+                  step={0.01}
+                  defaultValue={0}
+                  value={rules.buffer.value}
+                  min={0}
+                  max={500}
+                  onChange={(valueAsString, valueAsNumber) =>
+                    setRules((prev) => {
+                      return {
+                        ...prev,
+                        buffer: {
+                          ...prev.buffer,
+                          value: valueAsNumber,
+                        },
+                      }
+                    })
+                  }>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </VStack>
             </FormControl>
           </Box>
         </HStack>
@@ -406,8 +705,12 @@ export default function ConfigArea(props) {
                             </span>
                             <NumberInput
                               defaultValue={0}
-                              value={rules.group.value[cIdx][i]}
-                              min={0}
+                              value={
+                                rules.group.value[cIdx]
+                                  ? rules.group.value[cIdx][i]
+                                  : 0
+                              }
+                              min={1}
                               max={500}
                               onChange={(valueAsString, valueAsNumber) =>
                                 setRules((prev) => {
@@ -472,8 +775,12 @@ export default function ConfigArea(props) {
 
                             <NumberInput
                               defaultValue={0}
-                              value={rules.count.value[cIdx][i]}
-                              min={0}
+                              value={
+                                rules.count.value[cIdx]
+                                  ? rules.count.value[cIdx][i]
+                                  : 0
+                              }
+                              min={1}
                               max={500}
                               onChange={(valueAsString, valueAsNumber) =>
                                 setRules((prev) => {
@@ -554,7 +861,7 @@ export default function ConfigArea(props) {
                             precision={2}
                             step={0.01}
                             defaultValue={0}
-                            value={rules.overloadIncreaseDegree.value[i]}
+                            value={rules.overloadIncreaseDegree?.value[cIdx][i]}
                             min={0}
                             max={500}
                             onChange={(valueAsString, valueAsNumber) =>
@@ -566,8 +873,8 @@ export default function ConfigArea(props) {
                                     value:
                                       prev.overloadIncreaseDegree.value.map(
                                         (g, idx) => {
-                                          if (idx === i) {
-                                            g = valueAsNumber
+                                          if (idx === cIdx) {
+                                            g[i] = valueAsNumber
                                           }
                                           return g
                                         },
@@ -607,7 +914,7 @@ export default function ConfigArea(props) {
                             precision={2}
                             step={0.01}
                             defaultValue={0}
-                            value={rules.deloadDegree.value[i]}
+                            value={rules.deloadDegree.value[cIdx][i]}
                             min={-100}
                             max={500}
                             onChange={(valueAsString, valueAsNumber) =>
@@ -618,8 +925,8 @@ export default function ConfigArea(props) {
                                     ...prev.deloadDegree,
                                     value: prev.deloadDegree.value.map(
                                       (g, idx) => {
-                                        if (idx === i) {
-                                          g = valueAsNumber
+                                        if (idx === cIdx) {
+                                          g[i] = valueAsNumber
                                         }
                                         return g
                                       },
@@ -652,7 +959,7 @@ export default function ConfigArea(props) {
                     precision={2}
                     step={0.01}
                     defaultValue={0}
-                    value={rules.lightTrainingDegree.value}
+                    value={rules.lightTrainingDegree.value[cIdx]}
                     min={0}
                     max={500}
                     onChange={(valueAsString, valueAsNumber) =>
@@ -661,7 +968,14 @@ export default function ConfigArea(props) {
                           ...prev,
                           lightTrainingDegree: {
                             ...prev.lightTrainingDegree,
-                            value: valueAsNumber,
+                            value: prev.lightTrainingDegree.value.map(
+                              (l, idx) => {
+                                if (idx === cIdx) {
+                                  l = valueAsNumber
+                                }
+                                return l
+                              },
+                            ),
                           },
                         }
                       })
@@ -675,34 +989,43 @@ export default function ConfigArea(props) {
                 </VStack>
               ))}
             </FormControl>
+
             <FormControl display="flex" flexDirection="column">
-              <FormLabel>请输入中周期缓冲区比率</FormLabel>
-              <VStack align="normal">
-                <NumberInput
-                  precision={2}
-                  step={0.01}
-                  defaultValue={0}
-                  value={rules.buffer.value}
-                  min={0}
-                  max={500}
-                  onChange={(valueAsString, valueAsNumber) =>
-                    setRules((prev) => {
-                      return {
-                        ...prev,
-                        buffer: {
-                          ...prev.buffer,
-                          value: valueAsNumber,
-                        },
-                      }
-                    })
-                  }>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </VStack>
+              <FormLabel>请输入循环衔接渐进超负荷比率</FormLabel>
+              {new Array(rules.cycleCount.value - 1).fill().map((c, cIdx) => (
+                <VStack key={cIdx} align="normal">
+                  <span>{`循环${cIdx + 1}-循环${cIdx + 2}`}</span>
+                  <NumberInput
+                    precision={2}
+                    step={0.01}
+                    defaultValue={0}
+                    value={rules.cycleConnection.value[cIdx]}
+                    min={0}
+                    max={500}
+                    onChange={(valueAsString, valueAsNumber) =>
+                      setRules((prev) => {
+                        return {
+                          ...prev,
+                          cycleConnection: {
+                            ...prev.cycleConnection,
+                            value: prev.cycleConnection.value.map((g, idx) => {
+                              if (idx === cIdx) {
+                                g = valueAsNumber
+                              }
+                              return g
+                            }),
+                          },
+                        }
+                      })
+                    }>
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </VStack>
+              ))}
             </FormControl>
           </Flex>
         </HStack>

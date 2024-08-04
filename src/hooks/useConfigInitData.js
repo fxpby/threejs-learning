@@ -25,9 +25,14 @@ const useConfigInitData = () => {
   const [buffer, setBuffer] = useState(0.15)
   const [lightTrainingDegree, setLightTrainingDegree] = useState([0.7, 0.7])
   const [overloadIncreaseDegree, setOverloadIncreaseDegree] = useState([
-    0.02, 0.02, 0.02,
+    [0.02, 0.02, 0.02],
+    [0.02, 0.02, 0.02],
   ])
-  const [deloadDegree, setDeloadDegree] = useState([-0.1, -0.35])
+  const [deloadDegree, setDeloadDegree] = useState([
+    [-0.1, -0.35],
+    [-0.1, -0.35],
+  ])
+  const [cycleConnection, setCycleConnection] = useState([0.2])
 
   const [tableDataList, setTableDataList] = useState(null)
 
@@ -47,9 +52,10 @@ const useConfigInitData = () => {
       const initTable = new Array(rowLength).fill()
       let previousRowTable = {}
       const baseRelativeStrengthFirst = 1 - buffer
+
       const baseRelativeStrengthOther =
         prevTable[deloadWeekIndex()[0] - 1]?.relativeStrength +
-        overloadIncreaseDegree[0]
+        cycleConnection[tIdx - 1]
       let baseRelativeStrength =
         tIdx === 0 ? baseRelativeStrengthFirst : baseRelativeStrengthOther
 
@@ -63,7 +69,7 @@ const useConfigInitData = () => {
           if (col.id === 'week') {
             const deloadStart = deloadWeekIndex()[0]
 
-            if (isDeloadWeek) {
+            if (isdeloadWeekBreak && isDeloadWeek) {
               result[col.id] = `W-${deloadStart + 1}.${
                 currentDeloadWeekIdx + 1
               }`
@@ -90,14 +96,15 @@ const useConfigInitData = () => {
               ? baseRelativeStrength
               : previousRowTable?.relativeStrength
           let relativeStrength
+
           if (isDeloadWeek) {
             relativeStrength =
-              beforeRelativeStrength + deloadDegree[currentDeloadWeekIdx]
+              beforeRelativeStrength + deloadDegree[tIdx][currentDeloadWeekIdx]
           } else {
             relativeStrength =
               rowIdx === 0
                 ? baseRelativeStrength
-                : beforeRelativeStrength + overloadIncreaseDegree[rowIdx]
+                : beforeRelativeStrength + overloadIncreaseDegree[tIdx][rowIdx]
           }
           if (col.id === 'relativeStrength') {
             result[col.id] = relativeStrength
@@ -111,7 +118,7 @@ const useConfigInitData = () => {
             result[col.id] = _group * _count * trainingLoadWeight
           }
           if (col.id === 'lightTraining') {
-            result[col.id] = lightTrainingDegree * trainingLoadWeight
+            result[col.id] = lightTrainingDegree[tIdx] * trainingLoadWeight
           }
         })
         previousRowTable = result
@@ -133,6 +140,7 @@ const useConfigInitData = () => {
     })
 
     setTableDataList(totalTableList)
+    console.log('totalTableList: ', totalTableList)
   }
 
   return {
@@ -166,6 +174,8 @@ const useConfigInitData = () => {
     setDeloadDegree,
     isdeloadWeekBreak,
     setIsdeloadWeekBreak,
+    cycleConnection,
+    setCycleConnection,
   }
 }
 
