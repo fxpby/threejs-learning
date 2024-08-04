@@ -1,38 +1,39 @@
 import { useState } from 'react'
-import { RMCountRelation, tableColumn } from '@/pages/Calculator/constant'
+import {
+  RMCountRelation,
+  tableColumn,
+  defaultRule,
+} from '@/pages/Calculator/constant'
 
 const useConfigInitData = () => {
   // TODO 衔接overloadIncreaseDegree比率待设置
-  const [oneRM, setOneRM] = useState(100)
+  const [oneRM, setOneRM] = useState(defaultRule.oneRM)
   const [cycle, setCycle] = useState('mxs-1')
-
-  const [unit, setUnit] = useState('kg')
+  const [unit, setUnit] = useState(defaultRule.unit)
   // 循环次数
-  const [cycleCount, setCycleCount] = useState(2)
+  const [cycleCount, setCycleCount] = useState(defaultRule.cycleCount)
   const [progressiveOverloadWeekCount, setProgressiveOverloadWeekCount] =
-    useState(3)
-  const [deloadWeekCount, setDeloadWeekCount] = useState(2)
+    useState(defaultRule.progressiveOverloadWeekCount)
+  const [deloadWeekCount, setDeloadWeekCount] = useState(
+    defaultRule.deloadWeekCount,
+  )
   // 减载是否分段
-  const [isdeloadWeekBreak, setIsdeloadWeekBreak] = useState(true)
-  const [group, setGroup] = useState([
-    [4, 5, 5, 3, 5],
-    [4, 4, 4, 3, 5],
-  ])
-  const [count, setCount] = useState([
-    [6, 5, 5, 5, 5],
-    [5, 4, 3, 3, 3],
-  ])
+  const [isdeloadWeekBreak, setIsdeloadWeekBreak] = useState(
+    defaultRule.isdeloadWeekBreak,
+  )
+  const [group, setGroup] = useState(defaultRule.group)
+  const [count, setCount] = useState(defaultRule.count)
   const [buffer, setBuffer] = useState(0.15)
-  const [lightTrainingDegree, setLightTrainingDegree] = useState([0.7, 0.7])
-  const [overloadIncreaseDegree, setOverloadIncreaseDegree] = useState([
-    [0.02, 0.02, 0.02],
-    [0.02, 0.02, 0.02],
-  ])
-  const [deloadDegree, setDeloadDegree] = useState([
-    [-0.1, -0.35],
-    [-0.1, -0.35],
-  ])
-  const [cycleConnection, setCycleConnection] = useState([0.2])
+  const [lightTrainingDegree, setLightTrainingDegree] = useState(
+    defaultRule.lightTrainingDegree,
+  )
+  const [overloadIncreaseDegree, setOverloadIncreaseDegree] = useState(
+    defaultRule.overloadIncreaseDegree,
+  )
+  const [deloadDegree, setDeloadDegree] = useState(defaultRule.deloadDegree)
+  const [cycleConnection, setCycleConnection] = useState(
+    defaultRule.cycleConnection,
+  )
 
   const [tableDataList, setTableDataList] = useState(null)
 
